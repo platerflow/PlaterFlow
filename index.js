@@ -106,7 +106,7 @@ const PlaterFlow = class PlaterFlow {
         const setDir = this.ensureOutputDirectoryExists(set.name);
         
         const files = this.getFiles(set);
-        
+
         const plateSettings = this.getPlateSettings(set);
         const profiles = this.getProfiles(set);
 
@@ -114,7 +114,6 @@ const PlaterFlow = class PlaterFlow {
         const plater = new Plater(baseconfig.plater.location, setDir, logger);
             
         plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
-            // console.log(plates);
             
             logger.info(plates.length + " plates created for set " + set.name)
 
