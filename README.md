@@ -6,7 +6,7 @@ It can then slice them with SuperSlicer and upload them to your printer using Mo
 The goal is to provide a quick way of getting a bunch of STL's printable with your common settings.
 No hassle doing this all manually.
 
-Only tested on OSX so far.
+Tested on Windows and OSX for the moment.
 
 ## Usage
 
