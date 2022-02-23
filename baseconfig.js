@@ -1,10 +1,10 @@
 module.exports = {
     superslicer: {
-		//point this to the SuperSlicer binary. 
+        // point this to the SuperSlicer binary. 
         location: '/Applications/SuperSlicer.app/Contents/MacOS/SuperSlicer',
     },
     moonraker: {
-		//point this towards the moonraker URL
+        // point this towards the moonraker URL
         ip: '192.168.1.93',
     },
     plater: {
