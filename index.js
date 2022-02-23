@@ -82,7 +82,7 @@ const PlaterFlow = class PlaterFlow {
         plates.forEach(plate => {
             latest = this.moonraker.uploadFile(setDir+"/"+set.name+"_"+plate.fileOnly+".gcode", config.uploadToFolder);
             latest.then(() => {
-                logger.info("uploading plate "+plate.number+" for " + set.name);
+                logger.info("uploading plate "+(plate.number+1)+" for " + set.name);
             });
         });
         return latest;
