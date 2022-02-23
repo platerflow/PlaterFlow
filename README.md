@@ -20,7 +20,7 @@ Create your own config.js (example in `frominput.js`).
 
 And run it like this (example):
 ```bash
-node index.js frominput.js
+node index.js ./frominput.js
 ```
 
 After the command has finished you can view all the created files in the output directory.
