@@ -65,7 +65,7 @@ const PlaterFlow = class PlaterFlow {
     }
 
     slicePlates(plates, profiles, set, setDir) {
-        let latest = undefined;
+        let latest = Promise.resolve();
         plates.forEach(plate => {
             logger.info("slicing plate " + plate.file + " for set " + set.name);
             latest = ss.slice(profiles, plate.file, setDir+"/"+set.name+"_"+plate.fileOnly+".gcode");
@@ -77,7 +77,7 @@ const PlaterFlow = class PlaterFlow {
     }
 
     uploadFiles(plates, set, setDir) {
-        let latest = undefined;
+        let latest = Promise.resolve();
         plates.forEach(plate => {
             latest = this.moonraker.uploadFile(setDir+"/"+set.name+"_"+plate.fileOnly+".gcode", config.uploadToFolder);
             latest.then(() => {
@@ -89,7 +89,7 @@ const PlaterFlow = class PlaterFlow {
 
     getInfo(plates, set, setDir) {
         let info = [];
-        let latest = undefined;
+        let latest = Promise.resolve();
         plates.forEach(plate => {
             latest = this.moonraker.getInfo(config.uploadToFolder+"/"+set.name+"_"+plate.fileOnly+".gcode");
             latest.then(body => info.push(JSON.parse(body)));
