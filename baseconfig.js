@@ -9,7 +9,7 @@ module.exports = {
     },
     plater: {
         // point this to the location of the plater cli
-        // in the repo the OSX binary is provided for OSX users
+        // in the repo the OSX, RPI and Windows are provided.
         location: './platerbinary/plater_cli_osx'
     },
     profiles: {
