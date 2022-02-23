@@ -106,7 +106,7 @@ const PlaterFlow = class PlaterFlow {
         const setDir = this.ensureOutputDirectoryExists(set.name);
         
         const files = this.getFiles(set);
-
+        
         const plateSettings = this.getPlateSettings(set);
         const profiles = this.getProfiles(set);
 
