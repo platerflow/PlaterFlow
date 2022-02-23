@@ -1,6 +1,11 @@
 module.exports = {
+	//Possibility to auto upload to a certain directory for gcode files, example given
     uploadToFolder: 'test-plater-flow',
+	
+	//plater settings. Width and height refer to build plate dimensions. Spacing refers to the minimum amount of mm between objects, example given
     plate: { width: 145, height: 145, spacing: 1.3 },
+	
+	//your sets. Provided is an example of auto rename (to accent and base) based on a pattern inside the name of the STLs.
     sets: [
         {
             name: 'accent',
