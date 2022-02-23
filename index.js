@@ -5,6 +5,7 @@ const PlaterFile = require('./lib/platerfile');
 const Moonraker = require('./lib/moonraker')
 const Logger = require('./lib/logger');
 const DirectoryFile = require('./lib/directoryfile');
+const resolve = require('path').resolve;
 
 const baseconfig = require('./baseconfig.js');
 
@@ -146,7 +147,7 @@ const PlaterFlow = class PlaterFlow {
     }
 
     ensureOutputDirectoryExists(name) {
-        const setDir = './output/'+name;
+        const setDir = resolve('./output/'+name);
         if ( !fs.existsSync(setDir) ) {
             logger.info("Created directory: " + name)
             fs.mkdirSync(setDir)
