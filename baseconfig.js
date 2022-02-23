@@ -1,8 +1,10 @@
 module.exports = {
     superslicer: {
+		//point this to the SuperSlicer binary. 
         location: '/Applications/SuperSlicer.app/Contents/MacOS/SuperSlicer',
     },
     moonraker: {
+		//point this towards the moonraker URL
         ip: '192.168.1.93',
     },
     plater: {
@@ -11,7 +13,7 @@ module.exports = {
         location: './platerbinary/plater_cli_osx'
     },
     profiles: {
-        // list your supersllicer location profiles here
+        // list your superslicer location profiles here
         // example given
         titanx: [
             '/Users/gijs/Library/Application Support/SuperSlicer/printer/K3.ini',
