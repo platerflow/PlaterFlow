@@ -39,3 +39,5 @@ node index.js ./frominput.js
 
 After the command has finished you can view all the created files in the output directory.
 The Gcodes are uploaded towards your printer as well.
+
+![image](https://user-images.githubusercontent.com/227830/155403781-ddbaee5b-87db-4630-be89-caf85152d759.png)
