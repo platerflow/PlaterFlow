@@ -29,8 +29,15 @@ const PlaterFlow = class PlaterFlow {
     }
 
     run() {
+        if ( fs.existsSync(config.baseFolder) ) {
+            logger.info("Output folder already exists (probably from previous run) - clear it first");
+            process.exit(-1);
+        } else {
+            fs.mkdirSync(config.baseFolder);
+        }
+
         config.sets.forEach(set => {
-            this.processSet(set);
+            this.processSet(set, config.baseFolder);
         });
     }
 
@@ -103,8 +110,8 @@ const PlaterFlow = class PlaterFlow {
         });
     }
 
-    processSet(set) {
-        const setDir = this.ensureOutputDirectoryExists(set.name);
+    processSet(set, baseFolder) {
+        const setDir = this.ensureOutputDirectoryExists(set.name, baseFolder);
         
         const files = this.getFiles(set);
 
@@ -146,11 +153,11 @@ const PlaterFlow = class PlaterFlow {
 
     }
 
-    ensureOutputDirectoryExists(name) {
-        const setDir = resolve('./output/'+name);
+    ensureOutputDirectoryExists(name, baseFolder) {
+        const setDir = resolve(baseFolder+'/'+name);
         if ( !fs.existsSync(setDir) ) {
             logger.info("Created directory: " + name)
-            fs.mkdirSync(setDir)
+            fs.mkdirSync(setDir);
         }
         return setDir;
     }
