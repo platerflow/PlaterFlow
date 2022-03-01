@@ -10,10 +10,11 @@ const resolve = require('path').resolve;
 const baseconfig = require('./baseconfig.js');
 
 const Plater = require('./lib/plater');
-const ss = new SuperSlicer(baseconfig.superslicer.location, (baseconfig.superslicer.maxConcurrent || 1));
+const logger = new Logger();
+
+const ss = new SuperSlicer(baseconfig.superslicer.location, logger, (baseconfig.superslicer.maxConcurrent || 1));
 const pf = new PlaterFile();
 const df = new DirectoryFile();
-const logger = new Logger();
 
 // load config
 let config;
