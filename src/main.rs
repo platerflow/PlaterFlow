@@ -1,3 +1,19 @@
+use std::process::Command;
+
 fn main() {
-    println!("Hello, world!");
+    let output = Command::new("C:\\Users\\leand\\Desktop\\SuperSlicer_2.3.57.11_win64_220213\\superslicer_console.exe")
+        .arg("--help")
+        .output().unwrap_or_else(|e| {
+            panic!("failed to execute process: {}", e)
+    });
+
+    if output.status.success() {
+        let s = String::from_utf8_lossy(&output.stdout);
+
+        print!("rustc succeeded and stdout was:\n{}", s);
+    } else {
+        let s = String::from_utf8_lossy(&output.stderr);
+
+        print!("rustc failed and stderr was:\n{}", s);
+    }
 }
