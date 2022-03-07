@@ -1,19 +1,14 @@
-use std::process::Command;
+use std::io::{BufRead, BufReader};
+use subprocess::Exec;
 
 fn main() {
-    let output = Command::new("C:\\Users\\leand\\Desktop\\SuperSlicer_2.3.57.11_win64_220213\\superslicer_console.exe")
-        .arg("--help")
-        .output().unwrap_or_else(|e| {
-            panic!("failed to execute process: {}", e)
-    });
-
-    if output.status.success() {
-        let s = String::from_utf8_lossy(&output.stdout);
-
-        print!("rustc succeeded and stdout was:\n{}", s);
-    } else {
-        let s = String::from_utf8_lossy(&output.stderr);
-
-        print!("rustc failed and stderr was:\n{}", s);
+    let x = Exec::cmd("C:\\Users\\leand\\Desktop\\SuperSlicer_2.3.57.11_win64_220213\\superslicer_console.exe")
+            .arg("-g")
+            .arg("C:\\Users\\leand\\Downloads\\connector_trim_jig.stl")
+            .stream_stdout()
+            .unwrap();
+    let br = BufReader::new(x);
+    for (i, line) in br.lines().enumerate() {
+        println!("{}: {}", i, line.unwrap());
     }
 }
