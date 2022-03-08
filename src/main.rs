@@ -1,14 +1,17 @@
 use std::io::{BufRead, BufReader};
 use subprocess::Exec;
+use config::Config;
 mod config;
 
 
 
 fn main() {
-    let cfg_exists = config::check_present();
-    println!("Config exists? {}", cfg_exists);
-    if cfg_exists {
-        config::read_config();
+    if config::init::check_present() {
+        println!("Config found.");
+        config::init::read_config();
+    } else {
+        println!("No config found, creating one.");
+        config::init::create_config();
     }
     
     /*let x = Exec::cmd("C:\\Users\\leand\\Desktop\\SuperSlicer_2.3.57.11_win64_220213\\superslicer_console.exe")
