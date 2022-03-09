@@ -3,45 +3,48 @@ use serde_derive::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    superslicer: Superslicer,
-    plater: Plater,
+    pub superslicer: Superslicer,
+    pub plater: Plater,
 }
 #[derive(Debug, Deserialize)]
 pub struct Plater {
-    path: String,
-    size_x: u8,
-    size_z: u8,
-    size_y: u8,
+    pub path: String,
+    pub size_x: u8,
+    pub size_z: u8,
+    pub size_y: u8,
 }
 #[derive(Debug, Deserialize)]
 pub struct Superslicer {
-    path: String,
-    config_printer: String,
-    config_print: String,
-    config_filament: String,
+    pub path: String,
+    pub config_printer: String,
+    pub config_print: String,
+    pub config_filament: String,
 }
 pub mod init {
+    use super::Config;
     pub fn check_present() -> bool {
         return std::path::Path::new("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml").exists()
     }
     
-    pub fn read_config() {
+    pub fn read_config() -> Config {
         use std::fs::File;
         use std::io::Read;
-        use crate::config::Config;
         
-        let mut file = File::open("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml").unwrap();
+        let f = File::open("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml");
+        let mut f = match f {
+            Ok(file) => file,
+            Err(error) => panic!("Problem opening the file: {:?}", error),
+        };
         let mut data = String::new();
-        file.read_to_string(&mut data).unwrap();
+        f.read_to_string(&mut data).unwrap();
         let decoded: Config = toml::from_str(&data).unwrap();
-        
-        println!("{:#?}", decoded);
+        return decoded
     }
     
     pub fn create_config() {
         use std::fs;
         
-        let mut config_data_sample =  r#"[plater]
+        let config_data_sample =  r#"[plater]
         size_x = 165
         size_y = 165
         size_z = 165
@@ -52,7 +55,11 @@ pub mod init {
         config_filament = "C:\\Users\\leand\\AppData\\Roaming\\SuperSlicer\\filament\\FF Black K3 ASA.ini"
         config_print = "C:\\Users\\leand\\AppData\\Roaming\\SuperSlicer\\print\\K3 ABS FF.ini""#;
         
-        let mut file = fs::write("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml", config_data_sample);
+        let f = fs::write("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml", config_data_sample);
+        let _f = match f {
+            Ok(file) => file,
+            Err(error) => panic!("Problem opening the file: {:?}", error),
+        };
         self::read_config();
     }
 }
