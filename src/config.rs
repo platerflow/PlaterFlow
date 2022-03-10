@@ -22,15 +22,26 @@ pub struct Superslicer {
 }
 pub mod init {
     use super::Config;
+    use std::env;
+    use std::io;
+    use std::path::PathBuf;
+    
     pub fn check_present() -> bool {
-        return std::path::Path::new("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml").exists()
+        return std::path::Path::new(&get_config_path().unwrap()).exists()
     }
+    
+    pub fn get_config_path() -> io::Result<PathBuf> {
+        let mut cfgfile = env::current_exe()?;
+        cfgfile.pop();
+        cfgfile.push("config.toml");
+        Ok(cfgfile)
+    } 
     
     pub fn read_config() -> Config {
         use std::fs::File;
         use std::io::Read;
         
-        let f = File::open("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml");
+        let f = File::open(&get_config_path().unwrap());
         let mut f = match f {
             Ok(file) => file,
             Err(error) => panic!("Problem opening the file: {:?}", error),
@@ -55,7 +66,7 @@ pub mod init {
         config_filament = "C:\\Users\\leand\\AppData\\Roaming\\SuperSlicer\\filament\\FF Black K3 ASA.ini"
         config_print = "C:\\Users\\leand\\AppData\\Roaming\\SuperSlicer\\print\\K3 ABS FF.ini""#;
         
-        let f = fs::write("D:\\Projects\\PlaterFlow\\target\\debug\\config.toml", config_data_sample);
+        let f = fs::write(&get_config_path().unwrap(), config_data_sample);
         let _f = match f {
             Ok(file) => file,
             Err(error) => panic!("Problem opening the file: {:?}", error),
