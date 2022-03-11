@@ -31,9 +31,9 @@ pub mod init {
     }
     
     pub fn get_config_path() -> io::Result<PathBuf> {
-        let mut cfgfile = env::current_exe()?;
-        cfgfile.pop();
+        let mut cfgfile = env::current_dir()?;
         cfgfile.push("config.toml");
+        println!("{:#?}", cfgfile);
         Ok(cfgfile)
     } 
     
