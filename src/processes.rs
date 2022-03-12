@@ -24,17 +24,18 @@ pub mod plater {
         _gid.push_str("**/*.stl");
         for entry in glob(&_gid).expect("Failed to read glob pattern") {
             match entry {
-                Ok(path) => println!("{}", path.display()),
+                Ok(path) => write_plater_file(path),
                 Err(e) => println!("{:#?}", e),
             }
         }
     }
     
-    pub fn create_list() {
-        let files_list = fs::read_dir(&get_input_dir()).unwrap();
-        for file in files_list {
-            println!("Name: {:#?}", file.unwrap().path().display())
+    pub fn write_plater_file(filename: PathBuf) {
+        let file = PathBuf::from(filename.file_name().unwrap());
+        if file.starts_with("[a]") {
+            println!("accent {:?}", file);
         }
+        println!("{:?}", file);
     }
     
 }
