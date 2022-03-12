@@ -6,28 +6,32 @@ pub mod plater {
     use std::io;
     use std::path::PathBuf;
     use glob::glob;
+
     
-    pub fn get_input_dir() -> io::Result<PathBuf> {
-        let mut currdir = env::current_dir()?;
+    pub fn get_input_dir() -> std::path::PathBuf {
+        let mut currdir: PathBuf = env::current_dir().unwrap();
         currdir.push("input/");
-        println!("{:#?}", currdir);
-        Ok(currdir)
+        return currdir
     }
-    
-    pub fn create_list() {
-        let files_list = fs::read_dir(&get_input_dir().unwrap()).unwrap();
-        for file in files_list {
-            println!("Name: {:#?}", file.unwrap().path().display())
-        }
-    }
+
     pub fn list_files() {
-        for entry in glob("input\\**/*.stl").expect("Failed to read glob pattern") {
+        let mut _gid: String = get_input_dir().display().to_string();
+        _gid.push_str("**/*.stl");
+        for entry in glob(&_gid).expect("Failed to read glob pattern") {
             match entry {
                 Ok(path) => println!("{:#?}", path.display()),
                 Err(e) => println!("{:#?}", e),
             }
         }
     }
+    
+    pub fn create_list() {
+        let files_list = fs::read_dir(&get_input_dir()).unwrap();
+        for file in files_list {
+            println!("Name: {:#?}", file.unwrap().path().display())
+        }
+    }
+    
 }
 
 pub mod superslicer {

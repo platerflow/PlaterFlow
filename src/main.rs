@@ -8,7 +8,6 @@ fn main() {
     if config::init::check_present() {
         println!("Config found.");
         let config: Config = config::init::read_config();
-        println!("{:#?}", config.superslicer.path);
         
     } else {
         println!("No config found, creating one.");
