@@ -17,5 +17,5 @@ fn main() {
         println!("the config.toml currently created in the directory of which this app is located. Fire me up when ready! ;)");
         process::exit(exitcode::OK);
     }
-    processes::plater::create_list();
+    processes::plater::list_files();
 }

@@ -5,6 +5,7 @@ pub mod plater {
     use std::fs;
     use std::io;
     use std::path::PathBuf;
+    use glob::glob;
     
     pub fn get_input_dir() -> io::Result<PathBuf> {
         let mut currdir = env::current_dir()?;
@@ -17,6 +18,14 @@ pub mod plater {
         let files_list = fs::read_dir(&get_input_dir().unwrap()).unwrap();
         for file in files_list {
             println!("Name: {:#?}", file.unwrap().path().display())
+        }
+    }
+    pub fn list_files() {
+        for entry in glob("input\\**/*.stl").expect("Failed to read glob pattern") {
+            match entry {
+                Ok(path) => println!("{:#?}", path.display()),
+                Err(e) => println!("{:#?}", e),
+            }
         }
     }
 }
