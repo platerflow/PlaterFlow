@@ -8,9 +8,14 @@ pub mod plater {
     use glob::glob;
 
     
-    pub fn get_input_dir() -> std::path::PathBuf {
+    fn get_input_dir() -> std::path::PathBuf {
         let mut currdir: PathBuf = env::current_dir().unwrap();
         currdir.push("input/");
+        return currdir
+    }
+    fn get_output_dir() -> std::path::PathBuf {
+        let mut currdir: PathBuf = env::current_dir().unwrap();
+        currdir.push("output/");
         return currdir
     }
 
@@ -19,7 +24,7 @@ pub mod plater {
         _gid.push_str("**/*.stl");
         for entry in glob(&_gid).expect("Failed to read glob pattern") {
             match entry {
-                Ok(path) => println!("{:#?}", path.display()),
+                Ok(path) => println!("{}", path.display()),
                 Err(e) => println!("{:#?}", e),
             }
         }
