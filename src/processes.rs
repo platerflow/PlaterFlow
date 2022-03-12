@@ -31,11 +31,13 @@ pub mod plater {
     }
     
     pub fn write_plater_file(filename: PathBuf) {
-        let file = PathBuf::from(filename.file_name().unwrap());
+        let file = filename.file_name().unwrap().to_str().unwrap().to_string();
         if file.starts_with("[a]") {
-            println!("accent {:?}", file);
+            println!("{:?}{:?}", file, filename);
         }
-        println!("{:?}", file);
+        else {
+            println!("{:?}{:?}", file, filename);
+        }
     }
     
 }
