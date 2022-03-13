@@ -24,5 +24,5 @@ fn main() {
     fs::create_dir(processes::get_output_dir()).unwrap();
     
     processes::plater::list_files();
-    //fs::write(processes::get_output_dir().push(".gitkeep"), "").unwrap();
+    
 }
