@@ -13,7 +13,7 @@ No hassle doing this all manually.
 * Does currently not upload to moonraker (yet), I'm just glad I got it working at this point.
 
 
-##TODO
+## TODO
 * create input, output folders
 * handle no [a]
 * try to make it dummy proof by checking paths in config.toml
