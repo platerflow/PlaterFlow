@@ -30,7 +30,7 @@ pub mod init {
         return std::path::Path::new(&get_config_path().unwrap()).exists()
     }
     
-    pub fn get_config_path() -> io::Result<PathBuf> {
+    fn get_config_path() -> io::Result<PathBuf> {
         let mut cfgfile = env::current_dir()?;
         cfgfile.push("config.toml");
         Ok(cfgfile)

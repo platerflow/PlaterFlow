@@ -1,29 +1,37 @@
 use subprocess::Exec;
+use std::env;
+use std::fs;
+use std::io;
+use std::path::*;
+use glob::glob;
 
+pub fn get_input_dir() -> PathBuf {
+    let mut currdir: PathBuf = env::current_dir().unwrap();
+    currdir.push("input/");
+    return currdir
+}
+pub fn get_output_dir() -> PathBuf {
+    let mut currdir: PathBuf = env::current_dir().unwrap();
+    currdir.push("output/");
+    return currdir
+}
+fn get_accent_conf() -> PathBuf {
+    let mut currdir: PathBuf = env::current_dir().unwrap();
+    currdir.push("output/");
+    currdir.push("accent.conf");
+    return currdir
+}
+fn get_main_conf() -> PathBuf {
+    let mut currdir: PathBuf = env::current_dir().unwrap();
+    currdir.push("output/");
+    currdir.push("main.conf");
+    return currdir
+}
 pub mod plater {
-    use std::env;
-    use std::fs;
-    use std::io;
-    use std::path::PathBuf;
-    use glob::glob;
-
-
-    
-    fn get_input_dir() -> std::path::PathBuf {
-        let mut currdir: PathBuf = env::current_dir().unwrap();
-        currdir.push("input/");
-        return currdir
-    }
-    fn get_output_dir() -> std::path::PathBuf {
-        let mut currdir: PathBuf = env::current_dir().unwrap();
-        currdir.push("output/");
-        return currdir
-    }
-
     pub fn list_files() {
-        let mut _gid: String = get_input_dir().display().to_string();
+        let mut _gid: String = super::get_input_dir().display().to_string();
         _gid.push_str("**/*.stl");
-        for entry in glob(&_gid).expect("Failed to read glob pattern") {
+        for entry in super::glob(&_gid).expect("Failed to read glob pattern") {
             match entry {
                 Ok(path) => write_plater_file(path),
                 Err(e) => println!("{:#?}", e),
@@ -31,7 +39,23 @@ pub mod plater {
         }
     }
     
-    pub fn write_plater_file(filename: PathBuf) {
+    pub fn write_plater_file(filename: super::PathBuf) {
+        use std::fs::OpenOptions;
+        use std::io::prelude::*;
+        let accent = super::get_accent_conf();
+        let main = super::get_main_conf();
+        let mut accentfile = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .append(true)
+            .open(accent)
+            .unwrap();
+        let mut mainfile = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .append(true)
+            .open(main)
+            .unwrap();
         let filestr = filename.file_name().unwrap().to_str();
         let file = filestr.unwrap().to_string();
         let mut number = 1u32;
@@ -39,11 +63,14 @@ pub mod plater {
               number = analyze_name(&file).unwrap();
         }
         if file.starts_with("[a]") {
-            
-            println!("{:?}{:?}{:#?}", file, filename, number);
+            if let Err(e) = writeln!(accentfile, "{:?} {:#?}", filename, number) {
+                println!("Error writing accentfile {:?} {}", super::get_accent_conf(), e);
+            }
         }
         else {
-            println!("{:?}{:?}{:#?}", file, filename, number);
+            if let Err(e) = writeln!(mainfile, "{:?} {:#?}", filename, number) {
+                println!("Error writing accentfile {:?} {}", super::get_main_conf(), e);
+            }
         }
     }
     fn analyze_name(name: &str) -> Option<u32> {

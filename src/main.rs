@@ -2,6 +2,7 @@ mod config;
 mod processes;
 
 use std::process;
+use std::fs;
 use config::Config;
 
 fn main() {
@@ -16,5 +17,9 @@ fn main() {
         println!("the config.toml currently created in the directory of which this app is located. Fire me up when ready! ;)");
         process::exit(exitcode::OK);
     }
+    println!("Clearing output folder.");
+    fs::remove_dir_all(processes::get_output_dir()).unwrap();
+    fs::create_dir(processes::get_output_dir()).unwrap();
     processes::plater::list_files();
+    //fs::write(processes::get_output_dir().push(".gitkeep"), "").unwrap();
 }
