@@ -12,6 +12,7 @@ No hassle doing this all manually.
 * SuperSlicer does not output thumbnails when used in CLI mode, sadly.
 
 ## Install
+Download from releases or build yourself:
 
 ![image](https://user-images.githubusercontent.com/227830/158068869-dd6cb941-8bd0-451b-abf4-5213a5f3be55.png)
 
