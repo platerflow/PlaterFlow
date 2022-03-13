@@ -146,25 +146,18 @@ pub mod superslicer {
         }
     }
     fn slice(path: super::PathBuf, config: &super::Config) {
-        use std::io::{BufRead, BufReader};
-        
         println!("Running SuperSlicer on {:?}", path);
-        let x = super::Exec::cmd(config.superslicer.path.to_string())
+        let _x = super::Exec::cmd(config.superslicer.path.to_string())
                 .arg("--load")
                 .arg(config.superslicer.config_printer.to_string())
                 .arg("--load")
                 .arg(config.superslicer.config_filament.to_string())
                 .arg("--load")
                 .arg(config.superslicer.config_print.to_string())
-                .arg("--host-type klipper")
                 .arg("-g")
                 .arg(path)
                 .stream_stdout()
                 .unwrap();
-        let br = BufReader::new(x);
-        for (i, line) in br.lines().enumerate() {
-            println!("{}: {}", i, line.unwrap());
-        }
     }
 }
 
