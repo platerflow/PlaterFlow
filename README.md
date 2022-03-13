@@ -11,7 +11,11 @@ No hassle doing this all manually.
 * Wherever you place the binary, inside that folder there should be input and output folders. This is a current requirement.
 * SuperSlicer does not output thumbnails when used in CLI mode, sadly.
 * Does currently not upload to moonraker (yet), I'm just glad I got it working at this point.
-
+##TODO
+* create input, output folders
+* handle no [a]
+* try to make it dummy proof by checking paths in config.toml
+* 
 ## Install
 Download from releases or build yourself:
 
