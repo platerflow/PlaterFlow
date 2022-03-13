@@ -10,8 +10,8 @@ pub struct Config {
 pub struct Plater {
     pub path: String,
     pub size_x: u8,
-    pub size_z: u8,
     pub size_y: u8,
+    pub size_spacing: u8,
 }
 #[derive(Debug, Deserialize)]
 pub struct Superslicer {
@@ -57,7 +57,7 @@ pub mod init {
         let config_data_sample =  r#"[plater]
         size_x = 165
         size_y = 165
-        size_z = 165
+        size_spacing = 1
         path = "D:\\Projects\\PlaterFlow\\platerbinary\\plater_cli_win.exe"
         [superslicer]
         path = "C:\\Users\\leand\\Desktop\\SuperSlicer_2.3.57.11_win64_220213\\superslicer_console.exe"

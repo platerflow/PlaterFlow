@@ -2,7 +2,7 @@ use subprocess::Exec;
 use std::env;
 use std::path::*;
 use glob::*;
-
+use crate::config::Config;
 pub fn get_input_dir() -> PathBuf {
     let mut currdir: PathBuf = env::current_dir().unwrap();
     currdir.push("input/");
@@ -26,6 +26,7 @@ fn get_main_conf() -> PathBuf {
     return currdir
 }
 pub mod plater {
+    
     pub fn list_files() {
         let mut _gid: String = super::get_input_dir().display().to_string();
         _gid.push_str("**/*.stl");
@@ -69,7 +70,7 @@ pub mod plater {
         }
         else {
             if let Err(e) = writeln!(mainfile, "{} {}", filename.to_str().unwrap().to_string(), number) {
-                println!("Error writing accentfile {:?} {}", super::get_main_conf(), e);
+                println!("Error writing mainfile {:?} {}", super::get_main_conf(), e);
             }
         }
     }
@@ -81,6 +82,49 @@ pub mod plater {
             .1
             .parse()
             .ok()
+    }
+    pub fn run(config: super::Config) {
+        use std::io::{BufRead, BufReader};
+        let cpus = num_cpus::get() / 2;
+        println!("Running plater for the main color on {} cores", cpus);
+        let path = config.plater.path;
+        let x = super::Exec::cmd(&path)
+                .arg("-W")
+                .arg(config.plater.size_x.to_string())
+                .arg("-H")
+                .arg(config.plater.size_y.to_string())
+                .arg("-s")
+                .arg(config.plater.size_spacing.to_string())
+                .arg("-t")
+                .arg(cpus.to_string())
+                .arg("-o")
+                .arg("plater_main_%d")
+                .arg(super::get_main_conf())
+                .stream_stdout()
+                .unwrap();
+        let br = BufReader::new(x);
+        for (i, line) in br.lines().enumerate() {
+            println!("{}: {}", i, line.unwrap());
+        }
+        println!("Running plater for the accent color on {} cores", cpus);
+        let x = super::Exec::cmd(&path)
+                .arg("-W")
+                .arg(config.plater.size_x.to_string())
+                .arg("-H")
+                .arg(config.plater.size_y.to_string())
+                .arg("-s")
+                .arg(config.plater.size_spacing.to_string())
+                .arg("-t")
+                .arg(cpus.to_string())
+                .arg("-o")
+                .arg("plater_accent_%d")
+                .arg(super::get_accent_conf())
+                .stream_stdout()
+                .unwrap();
+        let br = BufReader::new(x);
+        for (i, line) in br.lines().enumerate() {
+            println!("{}: {}", i, line.unwrap());
+        }
     }
 }
 
