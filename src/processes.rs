@@ -57,19 +57,18 @@ pub mod plater {
             .append(true)
             .open(super::get_main_conf())
             .unwrap();
-        let filestr = filename.file_name().unwrap().to_str();
-        let file = filestr.unwrap().to_string();
+        let file = filename.file_name().unwrap().to_str().unwrap().to_string();
         let mut number = 1u32;
         if analyze_name(&file).is_some() {
               number = analyze_name(&file).unwrap();
         }
         if file.starts_with("[a]") {
-            if let Err(e) = writeln!(accentfile, "{:?} {:#?}", filename, number) {
+            if let Err(e) = writeln!(accentfile, "{} {}", filename.to_str().unwrap().to_string(), number) {
                 println!("Error writing accentfile {:?} {}", super::get_accent_conf(), e);
             }
         }
         else {
-            if let Err(e) = writeln!(mainfile, "{:?} {:#?}", filename, number) {
+            if let Err(e) = writeln!(mainfile, "{} {}", filename.to_str().unwrap().to_string(), number) {
                 println!("Error writing accentfile {:?} {}", super::get_main_conf(), e);
             }
         }
