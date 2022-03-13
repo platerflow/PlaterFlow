@@ -17,4 +17,10 @@ No hassle doing this all manually.
 
 ## Usage
 
-TBD
+Move your platerflow binary to a folder. 
+Inside that folder create an input and output folder, like so: (mine also have a platerbinary folder but that is ignored.)
+![image](https://user-images.githubusercontent.com/227830/158069117-6f4d2771-537f-458f-b8e3-b8067c5c5fcd.png)
+Add all the STLs you want sorted in the input folder. PlaterFlow will search recursively so directories are fine too.
+
+Upon first use a config.toml will be created. Edit it to your needs. Then run it again.
+![image](https://user-images.githubusercontent.com/227830/158069084-b97994f7-11f7-482e-baba-c36c8a8f8023.png)
