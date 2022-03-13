@@ -7,6 +7,7 @@ pub mod plater {
     use std::path::PathBuf;
     use glob::glob;
 
+
     
     fn get_input_dir() -> std::path::PathBuf {
         let mut currdir: PathBuf = env::current_dir().unwrap();
@@ -31,15 +32,29 @@ pub mod plater {
     }
     
     pub fn write_plater_file(filename: PathBuf) {
-        let file = filename.file_name().unwrap().to_str().unwrap().to_string();
+        let filestr = filename.file_name().unwrap().to_str();
+        let file = filestr.unwrap().to_string();
+        let mut number = 1u32;
+        if analyze_name(&file).is_some() {
+              number = analyze_name(&file).unwrap();
+        }
         if file.starts_with("[a]") {
-            println!("{:?}{:?}", file, filename);
+            
+            println!("{:?}{:?}{:#?}", file, filename, number);
         }
         else {
-            println!("{:?}{:?}", file, filename);
+            println!("{:?}{:?}{:#?}", file, filename, number);
         }
     }
-    
+    fn analyze_name(name: &str) -> Option<u32> {
+        name
+            .to_ascii_lowercase()
+            .strip_suffix(".stl")?
+            .rsplit_once("_x")?
+            .1
+            .parse()
+            .ok()
+    }
 }
 
 pub mod superslicer {
