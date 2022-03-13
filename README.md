@@ -9,6 +9,7 @@ No hassle doing this all manually.
 ## Limitations
 
 * Wherever you place the binary, inside that folder there should be input and output folders. This is a current requirement.
+* SuperSlicer does not output thumbnails when used in CLI mode, sadly.
 
 ## Install
 
