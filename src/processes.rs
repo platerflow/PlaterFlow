@@ -26,7 +26,6 @@ fn get_main_conf() -> PathBuf {
     return currdir
 }
 pub mod plater {
-    
     pub fn list_files() {
         let mut _gid: String = super::get_input_dir().display().to_string();
         _gid.push_str("**/*.stl");
@@ -83,11 +82,11 @@ pub mod plater {
             .parse()
             .ok()
     }
-    pub fn run(config: super::Config) {
+    pub fn run(config: &super::Config) {
         use std::io::{BufRead, BufReader};
         let cpus = num_cpus::get() / 2;
         println!("Running plater for the main color on {} cores", cpus);
-        let path = config.plater.path;
+        let path = &config.plater.path;
         let x = super::Exec::cmd(&path)
                 .arg("-W")
                 .arg(config.plater.size_x.to_string())
@@ -106,6 +105,7 @@ pub mod plater {
         for (i, line) in br.lines().enumerate() {
             println!("{}: {}", i, line.unwrap());
         }
+        println!("Done.");
         println!("Running plater for the accent color on {} cores", cpus);
         let x = super::Exec::cmd(&path)
                 .arg("-W")
@@ -125,11 +125,46 @@ pub mod plater {
         for (i, line) in br.lines().enumerate() {
             println!("{}: {}", i, line.unwrap());
         }
+        println!("Done.");
     }
 }
 
 pub mod superslicer {
-    
+    pub fn run(config: &super::Config) {
+        let mut _gid: String = super::get_output_dir().display().to_string();
+        _gid.push_str("**/*.stl");
+        let options = super::MatchOptions {
+            case_sensitive: false,
+            require_literal_separator: false,
+            require_literal_leading_dot: false,
+        };
+        for entry in super::glob_with(&_gid, options).expect("Failed to read glob pattern") {
+            match entry {
+                Ok(path) => slice(path, &config),
+                Err(e) => println!("{:#?}", e),
+            }
+        }
+    }
+    fn slice(path: super::PathBuf, config: &super::Config) {
+        use std::io::{BufRead, BufReader};
+        
+        println!("Running SuperSlicer on {:?}", path);
+        let x = super::Exec::cmd(config.superslicer.path.to_string())
+                .arg("--load")
+                .arg(config.superslicer.config_printer.to_string())
+                .arg("--load")
+                .arg(config.superslicer.config_filament.to_string())
+                .arg("--load")
+                .arg(config.superslicer.config_print.to_string())
+                .arg("-g")
+                .arg(path)
+                .stream_stdout()
+                .unwrap();
+        let br = BufReader::new(x);
+        for (i, line) in br.lines().enumerate() {
+            println!("{}: {}", i, line.unwrap());
+        }
+    }
 }
 
     
