@@ -4,6 +4,8 @@ mod processes;
 use std::process;
 use std::fs;
 use config::Config;
+use std::fs::OpenOptions;
+use std::io::prelude::*;
 
 fn main() {
     if config::init::check_present() {
@@ -20,6 +22,7 @@ fn main() {
     println!("Clearing output folder.");
     fs::remove_dir_all(processes::get_output_dir()).unwrap();
     fs::create_dir(processes::get_output_dir()).unwrap();
+    
     processes::plater::list_files();
     //fs::write(processes::get_output_dir().push(".gitkeep"), "").unwrap();
 }
