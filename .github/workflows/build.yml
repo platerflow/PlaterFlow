@@ -3,7 +3,7 @@ name: Build release
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Build"]
+    workflows: ["build"]
     types: [requested]
     branches:
       - 'rust/**'
