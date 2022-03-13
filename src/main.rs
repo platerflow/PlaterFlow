@@ -4,8 +4,6 @@ mod processes;
 use std::process;
 use std::fs;
 use config::Config;
-use std::fs::OpenOptions;
-use std::io::prelude::*;
 
 fn main() {
     if config::init::check_present() {

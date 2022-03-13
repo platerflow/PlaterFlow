@@ -1,9 +1,7 @@
 use subprocess::Exec;
 use std::env;
-use std::fs;
-use std::io;
 use std::path::*;
-use glob::glob;
+use glob::*;
 
 pub fn get_input_dir() -> PathBuf {
     let mut currdir: PathBuf = env::current_dir().unwrap();
@@ -31,30 +29,33 @@ pub mod plater {
     pub fn list_files() {
         let mut _gid: String = super::get_input_dir().display().to_string();
         _gid.push_str("**/*.stl");
-        for entry in super::glob(&_gid).expect("Failed to read glob pattern") {
+        let options = super::MatchOptions {
+            case_sensitive: false,
+            require_literal_separator: false,
+            require_literal_leading_dot: false,
+        };
+        for entry in super::glob_with(&_gid, options).expect("Failed to read glob pattern") {
             match entry {
-                Ok(path) => write_plater_file(path),
+                Ok(path) => write_plater_conf(path),
                 Err(e) => println!("{:#?}", e),
             }
         }
     }
     
-    pub fn write_plater_file(filename: super::PathBuf) {
+    pub fn write_plater_conf(filename: super::PathBuf) {
         use std::fs::OpenOptions;
         use std::io::prelude::*;
-        let accent = super::get_accent_conf();
-        let main = super::get_main_conf();
         let mut accentfile = OpenOptions::new()
             .write(true)
             .create(true)
             .append(true)
-            .open(accent)
+            .open(super::get_accent_conf())
             .unwrap();
         let mut mainfile = OpenOptions::new()
             .write(true)
             .create(true)
             .append(true)
-            .open(main)
+            .open(super::get_main_conf())
             .unwrap();
         let filestr = filename.file_name().unwrap().to_str();
         let file = filestr.unwrap().to_string();
