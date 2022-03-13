@@ -2,6 +2,7 @@ name: Build release
 
 on:
   workflow_run:
+    workflows: ["Build"]
     types: [requested]
     branches:
       - 'rust/**'
