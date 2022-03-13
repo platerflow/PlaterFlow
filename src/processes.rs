@@ -156,6 +156,7 @@ pub mod superslicer {
                 .arg(config.superslicer.config_filament.to_string())
                 .arg("--load")
                 .arg(config.superslicer.config_print.to_string())
+                .arg("--host-type klipper")
                 .arg("-g")
                 .arg(path)
                 .stream_stdout()
