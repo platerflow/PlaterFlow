@@ -6,8 +6,23 @@ const Moonraker = require('./lib/moonraker')
 const Logger = require('./lib/logger');
 const DirectoryFile = require('./lib/directoryfile');
 const resolve = require('path').resolve;
+const process = require('process');
 
-const baseconfig = require('./baseconfig.js');
+// load base config
+let baseconfig;
+if ( process.argv[3] == undefined ) {
+    baseconfig = require('./baseconfig.js');
+} else {
+    baseconfig = require(resolve(process.cwd()+"/"+process.argv[3]));
+}
+
+// load config
+let config;
+if ( process.argv[2] == undefined ) {
+    config = require('./config.js');
+} else {
+    config = require(resolve(process.cwd()+"/"+process.argv[2]));
+}
 
 const Plater = require('./lib/plater');
 const logger = new Logger();
@@ -15,14 +30,6 @@ const logger = new Logger();
 const ss = new SuperSlicer(baseconfig.superslicer.location, logger, (baseconfig.superslicer.maxConcurrent || 1));
 const pf = new PlaterFile();
 const df = new DirectoryFile();
-
-// load config
-let config;
-if ( process.argv[2] == undefined ) {
-    config = require('./config.js');
-} else {
-    config = require(process.argv[2]);
-}
 
 const PlaterFlow = class PlaterFlow {
     constructor() {
