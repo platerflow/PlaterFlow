@@ -1,6 +1,5 @@
 const fs = require('fs');
 const SuperSlicer = require('./lib/superslicer');
-// const PlaterJs = require('./lib/platerjs');
 const PlaterFile = require('./lib/platerfile');
 const Moonraker = require('./lib/moonraker')
 const Logger = require('./lib/logger');
@@ -39,7 +38,7 @@ const PlaterFlow = class PlaterFlow {
     run() {
         if ( fs.existsSync(config.baseFolder) ) {
             logger.info("Output folder already exists (probably from previous run) - clear it first");
-            process.exit(-1);
+            // process.exit(-1);
         } else {
             fs.mkdirSync(config.baseFolder);
         }
@@ -78,6 +77,20 @@ const PlaterFlow = class PlaterFlow {
     exitWithMessage(message) {
         logger.info("no plate settings found")
         process.exit();
+    }
+
+    createHalves(halves, profiles, set, setDir) {
+        const promises = [];
+        halves.forEach((plate, index) => {
+            logger.info("create half plates for set " + set.name);
+
+            const halfOne = plate.slice(0, Math.floor(plate.length/2)).map(e => e.file);
+            const halfTwo = plate.slice(Math.floor(plate.length/2)).map(e => e.file);
+
+            promises.push(ss.combine(profiles, halfOne, setDir+"/"+set.name+"_platehalf_"+index+"_half_1.stl"));
+            promises.push(ss.combine(profiles, halfTwo, setDir+"/"+set.name+"_platehalf_"+index+"_half_2.stl"));
+        });
+        return Promise.all(promises);
     }
 
     slicePlates(plates, profiles, set, setDir) {
@@ -126,39 +139,45 @@ const PlaterFlow = class PlaterFlow {
         const plateSettings = this.getPlateSettings(set);
         const profiles = this.getProfiles(set);
 
-        // const plater = new PlaterJs(ss, profiles, setDir, logger);
-
         const threads = (baseconfig.plater.threads || 1);
         const plater = new Plater(baseconfig.plater.location, threads, setDir, logger);
-            
+        
         plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
             
-            logger.info(plates.length + " plates created for set " + set.name)
+            logger.info(plates.plates.length + " plates created for set " + set.name)
 
-            this.slicePlates(plates, profiles, set, setDir).then(() => {
+            let halfCreation = Promise.resolve();
+            if ( (set.createHalfPlates || false) ) {
+                logger.info("going to create half plates");
+                halfCreation = this.createHalves(plates.info, profiles, set, setDir);
+            }
 
-                logger.info("done slicing all plates for " + set.name);
+            halfCreation.then(() => {
+                this.slicePlates(plates.plates, profiles, set, setDir).then(() => {
 
-                if ( config.uploadToFolder != undefined ) {
-                    logger.info("uploading plates for " + set.name);
+                    logger.info("done slicing all plates for " + set.name);
 
-                    this.uploadFiles(plates, set, setDir).then(() => {
-                        logger.info("done uploading all plates for " + set.name);
+                    if ( config.uploadToFolder != undefined ) {
+                        logger.info("uploading plates for " + set.name);
 
-                        this.getInfo(plates, set, setDir).then(info => {
-                            let totalWeight = 0;
-                            let totalTime = 0;
-                            info.forEach(i => {
-                                totalWeight += i.result.filament_weight_total;
-                                totalTime += i.result.estimated_time;
+                        this.uploadFiles(plates.plates, set, setDir).then(() => {
+                            logger.info("done uploading all plates for " + set.name);
+
+                            this.getInfo(plates.plates, set, setDir).then(info => {
+                                let totalWeight = 0;
+                                let totalTime = 0;
+                                info.forEach(i => {
+                                    totalWeight += i.result.filament_weight_total;
+                                    totalTime += i.result.estimated_time;
+                                });
+
+                                logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
+                                logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                             });
-
-                            logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
-                            logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                         });
-                    });
-                }
-            })
+                    }
+                });
+            });
         })
 
     }

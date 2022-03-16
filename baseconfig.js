@@ -5,12 +5,14 @@ module.exports = {
     },
     moonraker: {
         // point this towards the moonraker URL
+        // ip: '192.168.1.172',
         ip: '192.168.1.93',
     },
     plater: {
         // point this to the location of the plater cli
         // in the repo the OSX, RPI and Windows are provided.
-        location: './platerbinary/plater_cli_osx'
+        location: './platerbinary/plater_cli_osx',
+        threads: 2
     },
     profiles: {
         // list your superslicer location profiles here

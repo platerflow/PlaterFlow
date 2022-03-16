@@ -1,6 +1,6 @@
 module.exports = {
 	// Possibility to auto upload to a certain directory for gcode files, example given
-    uploadToFolder: 'test-plater-flow',
+    // uploadToFolder: 'test-plater-flow',
 	
 	// Plater settings.
     // Width and height refer to build plate dimensions.
@@ -15,6 +15,7 @@ module.exports = {
     sets: [
         {
             name: 'accent',
+            createHalfPlates: true,
             source: {
                 type: 'directories',
                 directories: [
@@ -26,6 +27,7 @@ module.exports = {
         },
         {
             name: 'base',
+            createHalfPlates: true,
             source: {
                 type: 'directories',
                 directories: [
