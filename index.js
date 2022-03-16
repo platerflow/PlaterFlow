@@ -127,7 +127,9 @@ const PlaterFlow = class PlaterFlow {
         const profiles = this.getProfiles(set);
 
         // const plater = new PlaterJs(ss, profiles, setDir, logger);
-        const plater = new Plater(baseconfig.plater.location, setDir, logger);
+
+        const threads = (baseconfig.plater.threads || 1);
+        const plater = new Plater(baseconfig.plater.location, threads, setDir, logger);
             
         plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
             
