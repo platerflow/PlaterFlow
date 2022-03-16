@@ -3,6 +3,7 @@ use std::env;
 use std::path::*;
 use glob::*;
 use crate::config::Config;
+use std::process;
 
 static mut CONTAINS_ACCENT: bool = false;
 
@@ -38,11 +39,17 @@ pub mod plater {
             require_literal_separator: false,
             require_literal_leading_dot: false,
         };
-        for entry in super::glob_with(&_gid, options).expect("Failed to read glob pattern") {
-            match entry {
-                Ok(path) => write_plater_conf(path),
-                Err(e) => println!("{:#?}", e),
+        if super::glob_with(&_gid, options).expect("Failed to read glob pattern").count() > 0 {
+            for entry in super::glob_with(&_gid, options).expect("Failed to read glob pattern") {
+                match entry {
+                    Ok(path) => write_plater_conf(path),
+                    Err(e) => println!("{:#?}", e),
+                }
             }
+            println!("{:?}", super::glob_with(&_gid, options).expect("Failed to read glob pattern").count());
+        } else {
+            println!("No files detected in input");
+            super::process::exit(exitcode::OK);
         }
     }
     
