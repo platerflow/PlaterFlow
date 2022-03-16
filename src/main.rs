@@ -4,8 +4,19 @@ mod processes;
 use std::process;
 use std::fs;
 use config::Config;
+use std::path::Path;
 
 fn main() {
+    if Path::new(&processes::get_output_dir()).exists() {
+        println!("Deleting output folder.");
+        fs::remove_dir_all(processes::get_output_dir()).unwrap();
+    }
+    if !Path::new(&processes::get_input_dir()).exists() {
+        println!("Creating input folder.");
+        fs::create_dir(processes::get_input_dir()).unwrap();
+    }
+    println!("Creating output folder.");
+    fs::create_dir(processes::get_output_dir()).unwrap();
     if config::init::check_present() {
         println!("Config found.");
         
@@ -17,10 +28,6 @@ fn main() {
         process::exit(exitcode::OK);
     }
     let config: &Config = &config::init::read_config();
-    println!("Clearing output folder.");
-    fs::remove_dir_all(processes::get_output_dir()).unwrap();
-    fs::create_dir(processes::get_output_dir()).unwrap();
-    
     processes::plater::list_files();
     processes::plater::run(config);
     processes::superslicer::run(config);
