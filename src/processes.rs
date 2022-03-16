@@ -3,6 +3,9 @@ use std::env;
 use std::path::*;
 use glob::*;
 use crate::config::Config;
+
+static mut CONTAINS_ACCENT: bool = false;
+
 pub fn get_input_dir() -> PathBuf {
     let mut currdir: PathBuf = env::current_dir().unwrap();
     currdir.push("input/");
@@ -25,6 +28,7 @@ fn get_main_conf() -> PathBuf {
     currdir.push("main.conf");
     return currdir
 }
+
 pub mod plater {
     pub fn list_files() {
         let mut _gid: String = super::get_input_dir().display().to_string();
@@ -66,6 +70,9 @@ pub mod plater {
             if let Err(e) = writeln!(accentfile, "{} {}", filename.to_str().unwrap().to_string(), number) {
                 println!("Error writing accentfile {:?} {}", super::get_accent_conf(), e);
             }
+            unsafe {
+                super::CONTAINS_ACCENT = true;
+            }
         }
         else {
             if let Err(e) = writeln!(mainfile, "{} {}", filename.to_str().unwrap().to_string(), number) {
@@ -106,24 +113,30 @@ pub mod plater {
             println!("{}: {}", i, line.unwrap());
         }
         println!("Done.");
-        println!("Running plater for the accent color on {} cores", cpus);
-        let x = super::Exec::cmd(&path)
-                .arg("-W")
-                .arg(config.plater.size_x.to_string())
-                .arg("-H")
-                .arg(config.plater.size_y.to_string())
-                .arg("-s")
-                .arg(config.plater.size_spacing.to_string())
-                .arg("-t")
-                .arg(cpus.to_string())
-                .arg("-o")
-                .arg("plater_accent_%d")
-                .arg(super::get_accent_conf())
-                .stream_stdout()
-                .unwrap();
-        let br = BufReader::new(x);
-        for (i, line) in br.lines().enumerate() {
-            println!("{}: {}", i, line.unwrap());
+        unsafe {
+            if super::CONTAINS_ACCENT {
+                println!("Running plater for the accent color on {} cores", cpus);
+                let x = super::Exec::cmd(&path)
+                        .arg("-W")
+                        .arg(config.plater.size_x.to_string())
+                        .arg("-H")
+                        .arg(config.plater.size_y.to_string())
+                        .arg("-s")
+                        .arg(config.plater.size_spacing.to_string())
+                        .arg("-t")
+                        .arg(cpus.to_string())
+                        .arg("-o")
+                        .arg("plater_accent_%d")
+                        .arg(super::get_accent_conf())
+                        .stream_stdout()
+                        .unwrap();
+                let br = BufReader::new(x);
+                for (i, line) in br.lines().enumerate() {
+                    println!("{}: {}", i, line.unwrap());
+                }
+            } else {
+                println!("No accent files detected, skipping.");
+            }
         }
         println!("Done.");
     }
