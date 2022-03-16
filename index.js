@@ -24,6 +24,7 @@ if ( process.argv[2] == undefined ) {
 }
 
 const Plater = require('./lib/plater');
+const { exit } = require('process');
 const logger = new Logger();
 
 const ss = new SuperSlicer(baseconfig.superslicer.location, logger, (baseconfig.superslicer.maxConcurrent || 1));
@@ -79,18 +80,35 @@ const PlaterFlow = class PlaterFlow {
         process.exit();
     }
 
-    createHalves(halves, profiles, set, setDir) {
-        const promises = [];
+    resetForHalves(halves, profiles) {
+        let promises = [];
         halves.forEach((plate, index) => {
-            logger.info("create half plates for set " + set.name);
-
-            const halfOne = plate.slice(0, Math.floor(plate.length/2)).map(e => e.file);
-            const halfTwo = plate.slice(Math.floor(plate.length/2)).map(e => e.file);
-
-            promises.push(ss.combine(profiles, halfOne, setDir+"/"+set.name+"_platehalf_"+index+"_half_1.stl"));
-            promises.push(ss.combine(profiles, halfTwo, setDir+"/"+set.name+"_platehalf_"+index+"_half_2.stl"));
+            plate.forEach(f => {
+                promises.push(ss.resetXy(profiles, f.file, f.file, f.posX, f.posY, f.rotation));
+            });
         });
         return Promise.all(promises);
+    }
+
+    createHalves(halves, profiles, set, setDir) {
+        return new Promise((res, rej) => {
+            this.resetForHalves(halves, profiles).then(() => {
+                const promises = [];
+                halves.forEach((plate, index) => {
+                    logger.info("create half plates for set " + set.name);
+                    const halfOne = plate.slice(0, Math.floor(plate.length/2)).map(e => e.file);
+                    const halfTwo = plate.slice(Math.floor(plate.length/2)).map(e => e.file);
+
+                    console.log(halfTwo);
+
+                    promises.push(ss.combine(profiles, halfOne, setDir+"/"+set.name+"_platehalf_"+index+"_half_1.stl"));
+                    promises.push(ss.combine(profiles, halfTwo, setDir+"/"+set.name+"_platehalf_"+index+"_half_2.stl"));
+                });
+                Promise.all(promises).then(() => {
+                    res();
+                });
+            });
+        });
     }
 
     slicePlates(plates, profiles, set, setDir) {
@@ -131,10 +149,36 @@ const PlaterFlow = class PlaterFlow {
         });
     }
 
+    copyFiles(files, dir) {
+        let fileI = 0;
+        files.forEach(file => {
+            for (let index = 0; index < file.times; index++) {
+                fs.copyFileSync(file.name, dir+"/"+fileI+"_"+index+"_"+file.file);
+                fileI++;
+            }
+        });
+    }
+
+    readFiles(dir) {
+
+    }
+
     processSet(set, baseFolder) {
         const setDir = this.ensureOutputDirectoryExists(set.name, baseFolder);
+
+        const sourceDir = setDir+"/source";
         
-        const files = this.getFiles(set);
+        if ( !fs.existsSync(sourceDir) ) {
+            const files = this.getFiles(set);
+            fs.mkdirSync(sourceDir);
+            this.copyFiles(files, sourceDir);
+        }
+
+        let files = [];
+        df.recursiveRead(sourceDir, file => {
+            file.times = 1;
+            files.push(file);
+        });
 
         const plateSettings = this.getPlateSettings(set);
         const profiles = this.getProfiles(set);
