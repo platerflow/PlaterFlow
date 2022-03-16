@@ -15,7 +15,7 @@ No hassle doing this all manually.
 
 ## TODO
 * ~~create input, output folders~~ Done
-* handle no [a]
+* ~~handle no [a]~~ Done
 * try to make it dummy proof by checking paths in config.toml
 * moonraker support
 
