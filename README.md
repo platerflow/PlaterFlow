@@ -8,6 +8,11 @@ No hassle doing this all manually.
 
 Tested on Windows and OSX for the moment.
 
+
+## Attribution
+Thanks for https://github.com/Rhoban/Plater for providing the great Plater tool!
+It is the brains of this PlaterFlow utility.
+
 ## Install
 
 Make sure [NodeJS](https://nodejs.org/en/download/) is currently installed. 
