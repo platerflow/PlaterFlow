@@ -92,6 +92,10 @@ const PlaterFlow = class PlaterFlow {
 
     createHalves(halves, profiles, set, setDir) {
         return new Promise((res, rej) => {
+            if ( halves.length < 2 ) {
+                res([]);
+            }
+
             this.resetForHalves(halves, profiles).then(() => {
                 let promises = [];
                 let halveFiles = [];
@@ -117,11 +121,11 @@ const PlaterFlow = class PlaterFlow {
         });
     }
 
-    slicePlates(plates, profiles, set, setDir) {
+    slicePlates(plates, profiles, set, setDir, baseColor) {
         let latest = Promise.resolve();
         plates.forEach(plate => {
             logger.info("slicing plate " + plate.file + " for set " + set.name);
-            latest = ss.slice(profiles, plate.file, setDir+"/"+set.name+"_"+plate.fileOnly+".gcode");
+            latest = ss.slice(profiles, plate.file, setDir+"/"+set.name+"_"+plate.fileOnly+".gcode", baseColor);
             latest.then(() => {
                 logger.info("done slicing plate " + plate.file + " for set " + set.name);
             })
@@ -202,14 +206,19 @@ const PlaterFlow = class PlaterFlow {
             halfCreation.then(halves => {
                 const slicing = [];
 
-                slicing.push(this.slicePlates(plates.plates, profiles, set, setDir));
-                slicing.push(this.slicePlates(halves, profiles, set, setDir));
+                const baseColor = set.color || 0xff0000;
+
+                slicing.push(this.slicePlates(plates.plates, profiles, set, setDir, baseColor));
+                slicing.push(this.slicePlates(halves, profiles, set, setDir, baseColor));
                 
                 Promise.all(slicing).then(() => {
                     logger.info("done slicing all plates for " + set.name);
 
                     if ( config.uploadToFolder != undefined ) {
                         logger.info("uploading plates for " + set.name);
+
+                        console.log(halves);
+                        console.log(plates.plates)
                         
                         // upload halves first
                         this.uploadFiles(halves, set, setDir, config.uploadToFolder+"/halves/").then(() => {
