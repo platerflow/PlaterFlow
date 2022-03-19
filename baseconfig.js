@@ -2,6 +2,7 @@ module.exports = {
     superslicer: {
         // point this to the SuperSlicer binary. 
         location: '/Applications/SuperSlicer.app/Contents/MacOS/SuperSlicer',
+        maxConcurrent: 2
     },
     moonraker: {
         // point this towards the moonraker URL

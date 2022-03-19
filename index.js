@@ -93,20 +93,26 @@ const PlaterFlow = class PlaterFlow {
     createHalves(halves, profiles, set, setDir) {
         return new Promise((res, rej) => {
             this.resetForHalves(halves, profiles).then(() => {
-                const promises = [];
+                let promises = [];
+                let halveFiles = [];
+
                 halves.forEach((plate, index) => {
                     logger.info("create half plates for set " + set.name);
                     const halfOne = plate.slice(0, Math.floor(plate.length/2)).map(e => e.file);
                     const halfTwo = plate.slice(Math.floor(plate.length/2)).map(e => e.file);
 
-                    console.log(halfTwo);
+                    const createHalfPlate = (halve, nr) => {
+                        const fileName = set.name+"_platehalf_"+index+"_half_"+nr+".stl";
+                        const totalPath = setDir+"/" + fileName;
+                        halveFiles.push({ file: totalPath, fileOnly: fileName });
+                        return ss.combine(profiles, halve, totalPath);
+                    };
 
-                    promises.push(ss.combine(profiles, halfOne, setDir+"/"+set.name+"_platehalf_"+index+"_half_1.stl"));
-                    promises.push(ss.combine(profiles, halfTwo, setDir+"/"+set.name+"_platehalf_"+index+"_half_2.stl"));
+                    promises.push(createHalfPlate(halfOne, 1));
+                    promises.push(createHalfPlate(halfTwo, 2));
                 });
-                Promise.all(promises).then(() => {
-                    res();
-                });
+
+                Promise.all(promises).then(() => res(halveFiles));
             });
         });
     }
@@ -123,12 +129,13 @@ const PlaterFlow = class PlaterFlow {
         return latest;
     }
 
-    uploadFiles(plates, set, setDir) {
+    uploadFiles(plates, set, setDir, uploadDir) {
         let latest = Promise.resolve();
         plates.forEach(plate => {
-            latest = this.moonraker.uploadFile(setDir+"/"+set.name+"_"+plate.fileOnly+".gcode", config.uploadToFolder);
+            const file = setDir+"/"+set.name+"_"+plate.fileOnly+".gcode";
+            latest = this.moonraker.uploadFile(file, uploadDir);
             latest.then(() => {
-                logger.info("uploading plate "+(plate.number+1)+" for " + set.name);
+                logger.info("uploading plate "+file+" for " + set.name);
             });
         });
         return latest;
@@ -157,10 +164,6 @@ const PlaterFlow = class PlaterFlow {
                 fileI++;
             }
         });
-    }
-
-    readFiles(dir) {
-
     }
 
     processSet(set, baseFolder) {
@@ -196,27 +199,34 @@ const PlaterFlow = class PlaterFlow {
                 halfCreation = this.createHalves(plates.info, profiles, set, setDir);
             }
 
-            halfCreation.then(() => {
-                this.slicePlates(plates.plates, profiles, set, setDir).then(() => {
+            halfCreation.then(halves => {
+                const slicing = [];
 
+                slicing.push(this.slicePlates(plates.plates, profiles, set, setDir));
+                slicing.push(this.slicePlates(halves, profiles, set, setDir));
+                
+                Promise.all(slicing).then(() => {
                     logger.info("done slicing all plates for " + set.name);
 
                     if ( config.uploadToFolder != undefined ) {
                         logger.info("uploading plates for " + set.name);
+                        
+                        // upload halves first
+                        this.uploadFiles(halves, set, setDir, config.uploadToFolder+"/halves/").then(() => {
+                            this.uploadFiles(plates.plates, set, setDir, config.uploadToFolder).then(() => {
+                                logger.info("done uploading all plates for " + set.name);
 
-                        this.uploadFiles(plates.plates, set, setDir).then(() => {
-                            logger.info("done uploading all plates for " + set.name);
+                                this.getInfo(plates.plates, set, setDir).then(info => {
+                                    let totalWeight = 0;
+                                    let totalTime = 0;
+                                    info.forEach(i => {
+                                        totalWeight += i.result.filament_weight_total;
+                                        totalTime += i.result.estimated_time;
+                                    });
 
-                            this.getInfo(plates.plates, set, setDir).then(info => {
-                                let totalWeight = 0;
-                                let totalTime = 0;
-                                info.forEach(i => {
-                                    totalWeight += i.result.filament_weight_total;
-                                    totalTime += i.result.estimated_time;
+                                    logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
+                                    logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                                 });
-
-                                logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
-                                logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                             });
                         });
                     }
