@@ -15,6 +15,7 @@ module.exports = {
     sets: [
         {
             name: 'accent',
+            color: 0xff0000,
             createHalfPlates: true,
             source: {
                 type: 'directories',
@@ -27,6 +28,7 @@ module.exports = {
         },
         {
             name: 'base',
+            color: 0x6a6e75,
             createHalfPlates: true,
             source: {
                 type: 'directories',
