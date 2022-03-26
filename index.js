@@ -205,13 +205,12 @@ const PlaterFlow = class PlaterFlow {
         const threads = (baseconfig.plater.threads || 1);
         const plater = new Plater(baseconfig.plater.location, threads, setDir, logger);
 
-        
-        const threads = (baseconfig.plater.threads || 1);
-
         const rotationNeeded = set.rotate || 0;
+
+        const dontRotate = rotationNeeded != 0;
         
         this.rotate(files, rotationNeeded, profiles).then(() => {
-            plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
+            plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing, dontRotate).then(plates => {
                 
                 logger.info(plates.plates.length + " plates created for set " + set.name)
 
