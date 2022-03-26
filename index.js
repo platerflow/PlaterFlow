@@ -91,13 +91,20 @@ const PlaterFlow = class PlaterFlow {
     }
 
     rotate(files, rotate, profiles) {
-        if ( rotate == 0 ) {
-            return Promise.resolve();
-        }
-
         let promises = [];
         files.forEach(file => {
-            promises.push(ss.rotate(profiles, file.name, file.name, rotate));
+            let useRotation = rotate;
+            let re = /\_r([0-9]+)/;
+            const results = re.exec(file.file);
+            if ( results ) {
+                useRotation = parseInt(results[1]);
+            }
+
+            if ( useRotation == 0 ) {
+                promises.push(Promise.resolve());
+            } else {
+                promises.push(ss.rotate(profiles, file.name, file.name, useRotation));
+            }
         });
         return Promise.all(promises);
     }
@@ -208,7 +215,7 @@ const PlaterFlow = class PlaterFlow {
         const rotationNeeded = set.rotate || 0;
 
         const dontRotate = rotationNeeded != 0;
-        
+
         this.rotate(files, rotationNeeded, profiles).then(() => {
             plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing, dontRotate).then(plates => {
                 
@@ -234,9 +241,6 @@ const PlaterFlow = class PlaterFlow {
                         if ( config.uploadToFolder != undefined ) {
                             logger.info("uploading plates for " + set.name);
 
-                            console.log(halves);
-                            console.log(plates.plates)
-                            
                             // upload halves first
                             this.uploadFiles(halves, set, setDir, config.uploadToFolder+"/halves/").then(() => {
                                 this.uploadFiles(plates.plates, set, setDir, config.uploadToFolder).then(() => {
