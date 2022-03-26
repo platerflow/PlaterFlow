@@ -90,6 +90,18 @@ const PlaterFlow = class PlaterFlow {
         return Promise.all(promises);
     }
 
+    rotate(files, rotate, profiles) {
+        if ( rotate == 0 ) {
+            return Promise.resolve();
+        }
+
+        let promises = [];
+        files.forEach(file => {
+            promises.push(ss.rotate(profiles, file.name, file.name, rotate));
+        });
+        return Promise.all(promises);
+    }
+
     createHalves(halves, profiles, set, setDir) {
         return new Promise((res, rej) => {
             if ( halves.length < 2 ) {
@@ -192,57 +204,63 @@ const PlaterFlow = class PlaterFlow {
 
         const threads = (baseconfig.plater.threads || 1);
         const plater = new Plater(baseconfig.plater.location, threads, setDir, logger);
+
         
-        plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
-            
-            logger.info(plates.plates.length + " plates created for set " + set.name)
+        const threads = (baseconfig.plater.threads || 1);
 
-            let halfCreation = Promise.resolve();
-            if ( (set.createHalfPlates || false) ) {
-                logger.info("going to create half plates");
-                halfCreation = this.createHalves(plates.info, profiles, set, setDir);
-            }
-
-            halfCreation.then(halves => {
-                const slicing = [];
-
-                const baseColor = set.color || 0xff0000;
-
-                slicing.push(this.slicePlates(plates.plates, profiles, set, setDir, baseColor));
-                slicing.push(this.slicePlates(halves, profiles, set, setDir, baseColor));
+        const rotationNeeded = set.rotate || 0;
+        
+        this.rotate(files, rotationNeeded, profiles).then(() => {
+            plater.plater(files, plateSettings.width, plateSettings.height, plateSettings.spacing).then(plates => {
                 
-                Promise.all(slicing).then(() => {
-                    logger.info("done slicing all plates for " + set.name);
+                logger.info(plates.plates.length + " plates created for set " + set.name)
 
-                    if ( config.uploadToFolder != undefined ) {
-                        logger.info("uploading plates for " + set.name);
+                let halfCreation = Promise.resolve();
+                if ( (set.createHalfPlates || false) ) {
+                    logger.info("going to create half plates");
+                    halfCreation = this.createHalves(plates.info, profiles, set, setDir);
+                }
 
-                        console.log(halves);
-                        console.log(plates.plates)
-                        
-                        // upload halves first
-                        this.uploadFiles(halves, set, setDir, config.uploadToFolder+"/halves/").then(() => {
-                            this.uploadFiles(plates.plates, set, setDir, config.uploadToFolder).then(() => {
-                                logger.info("done uploading all plates for " + set.name);
+                halfCreation.then(halves => {
+                    const slicing = [];
 
-                                this.getInfo(plates.plates, set, setDir).then(info => {
-                                    let totalWeight = 0;
-                                    let totalTime = 0;
-                                    info.forEach(i => {
-                                        totalWeight += i.result.filament_weight_total;
-                                        totalTime += i.result.estimated_time;
+                    const baseColor = set.color || 0xff0000;
+
+                    slicing.push(this.slicePlates(plates.plates, profiles, set, setDir, baseColor));
+                    slicing.push(this.slicePlates(halves, profiles, set, setDir, baseColor));
+                    
+                    Promise.all(slicing).then(() => {
+                        logger.info("done slicing all plates for " + set.name);
+
+                        if ( config.uploadToFolder != undefined ) {
+                            logger.info("uploading plates for " + set.name);
+
+                            console.log(halves);
+                            console.log(plates.plates)
+                            
+                            // upload halves first
+                            this.uploadFiles(halves, set, setDir, config.uploadToFolder+"/halves/").then(() => {
+                                this.uploadFiles(plates.plates, set, setDir, config.uploadToFolder).then(() => {
+                                    logger.info("done uploading all plates for " + set.name);
+
+                                    this.getInfo(plates.plates, set, setDir).then(info => {
+                                        let totalWeight = 0;
+                                        let totalTime = 0;
+                                        info.forEach(i => {
+                                            totalWeight += i.result.filament_weight_total;
+                                            totalTime += i.result.estimated_time;
+                                        });
+
+                                        logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
+                                        logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                                     });
-
-                                    logger.info("total filament used is " + Math.round(totalWeight) + " gram for " + set.name);
-                                    logger.info("total time used is " + Math.round(totalTime/60) + " minutes for " + set.name);
                                 });
                             });
-                        });
-                    }
+                        }
+                    });
                 });
-            });
-        })
-
+            })
+        });
     }
 
     ensureOutputDirectoryExists(name, baseFolder) {
