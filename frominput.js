@@ -13,20 +13,34 @@ module.exports = {
 	// Your sets.
     // Provided is an example of auto rename (to accent and base) based on a pattern inside the name of the STLs.
     sets: [
-        // {
-        //     name: 'accent',
-        //     color: 0xff0000,
-        //     createHalfPlates: true,
-        //     rotate: 30,
-        //     source: {
-        //         type: 'directories',
-        //         directories: [
-        //             './input'
-        //         ],
-        //         includePattern: ['[a]', '[A]']
-        //     },
-        //     profile: 'titanx'
-        // },
+        {
+            name: 'accent',
+            color: 0xff0000,
+            createHalfPlates: true,
+            rotate: 30,
+            source: {
+                type: 'directories',
+                directories: [
+                    './input'
+                ],
+                includePattern: ['[a]', '[A]'],
+            },
+            profile: 'titanx'
+        },
+        {
+            name: 'otheraccent',
+            color: 0xff0000,
+            createHalfPlates: true,
+            rotate: 30,
+            source: {
+                type: 'directories',
+                directories: [
+                    './input'
+                ],
+                includePattern: ['[b]', '[B]']
+            },
+            profile: 'titanx'
+        },
         {
             name: 'base',
             color: 0x6a6e75,
@@ -37,7 +51,7 @@ module.exports = {
                 directories: [
                     './input'
                 ],
-                excludePattern: ['[a]', '[A]']
+                excludePattern: ['[a]', '[A]', '[b]', '[B]']
             },
             profile: 'titanx'
         }
