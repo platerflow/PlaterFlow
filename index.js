@@ -23,7 +23,9 @@ const PlaterFlow = class PlaterFlow {
             config = require(resolve(process.cwd()+"/"+process.argv[2]));
         }
 
-        const logger = new Logger();
+        const enableDebug = process.argv.indexOf('--debug') != -1;
+        
+        const logger = new Logger(enableDebug);
 
         if ( fs.existsSync(config.baseFolder) ) {
             logger.info("Output folder already exists (probably from previous run) - clear it first");

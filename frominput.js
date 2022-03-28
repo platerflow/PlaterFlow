@@ -1,6 +1,6 @@
 module.exports = {
 	// Possibility to auto upload to a certain directory for gcode files, example given
-    // uploadToFolder: 'test-plater-flow',
+    uploadToFolder: 'test-plater-flow',
 	
 	// Plater settings.
     // Width and height refer to build plate dimensions.
@@ -9,11 +9,16 @@ module.exports = {
 
     // Base folder to put all the files after generation
     baseFolder: './output-temp',
+
+    // default printer
+    printer: 'v2',
 	
 	// Your sets.
     // Provided is an example of auto rename (to accent and base) based on a pattern inside the name of the STLs.
     sets: [
         {
+            // specific printer
+            printer: 'v2',
             name: 'accent',
             color: 0xff0000,
             createHalfPlates: true,

@@ -4,10 +4,14 @@ module.exports = {
         location: '/Applications/SuperSlicer.app/Contents/MacOS/SuperSlicer',
         maxConcurrent: 2
     },
-    moonraker: {
-        // point this towards the moonraker URL
-        // ip: '192.168.1.172',
-        ip: '192.168.1.93',
+    printers: {
+        // point these towards the moonraker URL
+        k3: {
+            ip: '192.168.1.114',
+        },
+        v2: {
+            ip: '192.168.1.93',
+        }
     },
     plater: {
         // point this to the location of the plater cli
