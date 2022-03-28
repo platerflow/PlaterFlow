@@ -12,7 +12,7 @@
     "bottleneck": "^2.19.5",
     "colors": "^1.4.0",
     "node-stl-to-thumbnail": "^1.1.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
   }
   "bin": "index.js",
   "pkg": {
