@@ -16,6 +16,9 @@
   },
   "bin": "index.js",
   "pkg": {
-    "assets": [ "node_modules/**/*", "lib/**/*" ]
+    "assets": [
+      "node_modules/**/*",
+      "lib/**/*"
+    ]
   }
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-pkg index.js
-move index-linux platerflow-linux
-move index-macos platerflow-macos
-move index-win.exe platerflow-win.exe
+pkg .
+move platernodejs-linux platerflow-linux
+move platernodejs-macos platerflow-macos
+move platernodejs-win.exe platerflow-win.exe
