@@ -10,7 +10,7 @@ const PlaterFlow = class PlaterFlow {
         // load base config
         let baseconfig;
         if ( process.argv[3] == undefined ) {
-            baseconfig = require('./baseconfig.js');
+            baseconfig = require('./settings.js');
         } else {
             baseconfig = require(resolve(process.cwd()+"/"+process.argv[3]));
         }
@@ -18,7 +18,7 @@ const PlaterFlow = class PlaterFlow {
         // load config
         let config;
         if ( process.argv[2] == undefined ) {
-            config = require('./config.js');
+            config = require('./prints.js');
         } else {
             config = require(resolve(process.cwd()+"/"+process.argv[2]));
         }

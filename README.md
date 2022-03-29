@@ -34,12 +34,12 @@ After which it'll be ready for usage.
 
 ## Usage
 
-Alter the base configuration in `baseconfig.js`.
-Create your own config.js (example in `frominput.js`).
+Alter the base configuration in `settings.js`.
+Create your own prints.js (example in `prints.js`).
 
 And run it like this (example):
 ```bash
-node index.js ./frominput.js
+node index.js ./prints.js
 ```
 
 After the command has finished you can view all the created files in the output directory.

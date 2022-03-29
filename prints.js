@@ -20,8 +20,15 @@ module.exports = {
             // specific printer
             printer: 'v2',
             name: 'accent',
+            
+            // Use this color for thumbnails
             color: 0xff0000,
+
+            // Will create for every plate two seperate plates
+            // with half of what was on the full plate
             createHalfPlates: true,
+
+            // Rotate all the parts found
             rotate: 30,
             source: {
                 type: 'directories',
@@ -37,6 +44,7 @@ module.exports = {
             color: 0xff0000,
             createHalfPlates: true,
             rotate: 30,
+            scale: 50,
             source: {
                 type: 'directories',
                 directories: [
