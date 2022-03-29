@@ -10,8 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "bottleneck": "^2.19.5",
-    "node-stl-to-thumbnail": "^1.1.0",
-    "request": "^2.88.2"
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.6.7",
+    "node-stl-to-thumbnail": "^1.1.0"
   },
   "bin": "index.js",
   "pkg": {
