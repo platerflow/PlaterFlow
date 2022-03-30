@@ -1,37 +1,43 @@
-const fs = require('fs');
-const SuperSlicer = require('./lib/superslicer');
-const Logger = require('./lib/logger');
-const resolve = require('path').resolve;
-const process = require('process');
-const Set = require('./lib/set');
+import { existsSync, mkdirSync, readFile, readFileSync } from 'fs';
+import SuperSlicer from './lib/superslicer.js';
+import Logger from './lib/logger.js';
+import { resolve } from 'path';
+import { argv, cwd } from 'process';
+import Set from './lib/set.js';
 
 const PlaterFlow = class PlaterFlow {
+
+    async getBaseconfig() {
+        return this.getJsonFromFile(this.getFileNameFromArg(3, './settings.js'));
+    }
+
+    getFileNameFromArg(nr, defaultFile) {
+        return argv[nr] == undefined ? defaultFile : resolve(cwd()+"/"+argv[nr]);
+    }
+
+    async getPrintConfig() {
+        const file = this.getFileNameFromArg(2, './prints.js');
+        return this.getJsonFromFile(file);
+    }
+
+    async getJsonFromFile(file) {
+        const contents = readFileSync(file);
+        return JSON.parse(contents);
+    }
+
     async run() {
-        // load base config
-        let baseconfig;
-        if ( process.argv[3] == undefined ) {
-            baseconfig = require('./settings.js');
-        } else {
-            baseconfig = require(resolve(process.cwd()+"/"+process.argv[3]));
-        }
-
-        // load config
-        let config;
-        if ( process.argv[2] == undefined ) {
-            config = require('./prints.js');
-        } else {
-            config = require(resolve(process.cwd()+"/"+process.argv[2]));
-        }
-
-        const enableDebug = process.argv.indexOf('--debug') != -1;
+        let baseconfig = await this.getBaseconfig();
+        let config = await this.getPrintConfig();
+        
+        const enableDebug = argv.indexOf('--debug') != -1;
         
         const logger = new Logger(enableDebug);
 
-        if ( fs.existsSync(config.baseFolder) ) {
+        if ( existsSync(config.baseFolder) ) {
             logger.info("Output folder already exists (probably from previous run) - clear it first");
             // process.exit(-1);
         } else {
-            fs.mkdirSync(config.baseFolder);
+            mkdirSync(config.baseFolder);
         }
         
         const superSlicer = new SuperSlicer(baseconfig.superslicer.location, logger, (baseconfig.superslicer.maxConcurrent || 1));
