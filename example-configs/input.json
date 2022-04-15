@@ -1,0 +1,49 @@
+{
+    "uploadToFolder": "plater-flow-test",
+	"plate": { "width": 120, "height": 120, "spacing": 1.3 },
+    "baseFolder": "./output-temp",
+    "printer": "v0",
+    "profile": "voron_v0_45deg",
+	"sets": [
+        {
+            "name": "accent", 
+            "color": 16711680,
+            "createHalfPlates": false,
+            "rotate": 45,
+            "source": {
+                "type": "directories",
+                "directories": [
+                    "./input"
+                ],
+                "includePattern": ["[a]", "[A]"]
+            }
+        },
+        {
+            "name": "otheraccent",
+            "color": 16711680,
+            "createHalfPlates": false,
+            "rotate": 30,
+            "scale": 50,
+            "source": {
+                "type": "directories",
+                "directories": [
+                    "./input"
+                ],
+                "includePattern": ["[b]", "[B]"]
+            }
+        },
+        {
+            "name": "base",
+            "color": 6975093,
+            "createHalfPlates": false,
+            "rotate": 30,
+            "source": {
+                "type": "directories",
+                "directories": [
+                    "./input"
+                ],
+                "excludePattern": ["[a]", "[A]", "[b]", "[B]"]
+            }
+        }
+    ]
+}

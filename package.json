@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
   "author": "",
@@ -13,7 +12,8 @@
     "bottleneck": "^2.19.5",
     "formdata-node": "^4.3.2",
     "node-fetch": "^3.2.3",
-    "node-stl-to-thumbnail": "^1.1.0"
+    "node-stl-to-thumbnail": "^1.1.0",
+    "yargs": "^17.4.1"
   },
   "bin": "index.js",
   "pkg": {

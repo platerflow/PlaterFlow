@@ -1,6 +1,6 @@
 import Bottleneck from 'bottleneck';
-import { createReadStream } from 'fs';
 import { FormData } from 'formdata-node';
+import { fileFromPathSync } from 'formdata-node/file-from-path';
 import fetch from 'node-fetch';
 
 export default class Moonraker {
@@ -17,7 +17,7 @@ export default class Moonraker {
             const form = new FormData();
             form.append('print', 'false');
             form.append('path', outputTo);
-            form.append('file', createReadStream(file));
+            form.append('file', fileFromPathSync(file));
 
             fetch('http://' + this.ip + '/server/files/upload',{
                 method: 'POST',
