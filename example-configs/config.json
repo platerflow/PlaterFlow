@@ -1,0 +1,30 @@
+{
+    "superslicer": {
+        "location": "/usr/bin/superslicer",
+        "maxConcurrent": 8
+    },
+    "printers": {
+        "enderv24": {
+            "ip": "192.168.107.3"
+        },
+        "v0": {
+            "ip": "192.168.107.10"
+        }
+    },
+    "plater": {
+        "location": "/usr/bin/plater",
+        "threads": 8
+    },
+    "profiles": {
+        "voron_v0_45deg": [
+            "/home/pieter/.config/SuperSlicer/printer/0.4 - Voron V0.1  (45 degree) (Accel Control).ini",
+            "/home/pieter/.config/SuperSlicer/filament/ABS - Ellis.ini",
+            "/home/pieter/.config/SuperSlicer/print/0.2 - Dragon SF - PIF 45 - Pieterv24.ini"
+        ],
+        "voron_enderv24": [
+            "/home/pieter/.config/SuperSlicer/printer/0.4 - Ender 3 V2.4 (Accel Control) (Speed2).ini",
+            "/home/pieter/.config/SuperSlicer/filament/ABS - Ellis.ini",
+            "/home/pieter/.config/SuperSlicer/print/0.2 - Dragon SF - PIF - Pieterv24.ini"
+        ]
+    }
+}
