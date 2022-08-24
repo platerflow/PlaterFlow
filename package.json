@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bottleneck": "^2.19.5",
-    "formdata-node": "^4.3.2",
+    "formdata-node": "^5.0.0",
     "node-fetch": "^3.2.3",
     "node-stl-to-thumbnail": "^1.1.0"
   },
